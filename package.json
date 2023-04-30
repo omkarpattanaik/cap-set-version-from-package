@@ -1,0 +1,22 @@
+{
+  "name": "cap-set-version-from-package",
+  "version": "1.0.0",
+  "description": "cap-set-version-from-package is a simple CLI for updating gradle.build with package.json version",
+  "bin": {
+    "cap-set-version-from-package": "./bin/index.js"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "type": "module",
+  "keywords": [
+    "cli"
+  ],
+  "author": "Omkar Pattanaik",
+  "license": "ISC",
+  "dependencies": {
+    "figlet": "^1.5.2",
+    "gradient-string": "^2.0.2",
+    "inquirer": "^9.1.4"
+  }
+}
