@@ -50,6 +50,21 @@ if you are using **npx** then no need to install directly use this
 npx https://github.com/omkarpattanaik/cap-set-version-from-package
 ```
 
+## For developers and contibuters
+To install package
+```bash
+npm install
+```
+To use  locally in system
+```bash
+npm i -g
+```
+
+To remove it locally
+```bash
+npm rm -g
+```
+
 ## Author
 
 - [@omkarpattanaik](https://www.github.com/omkarpattanaik)
