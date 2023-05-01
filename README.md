@@ -2,7 +2,7 @@
 
 [![MIT License](https://img.shields.io/apm/l/atomic-design-ui.svg?)](https://github.com/tterb/atomic-design-ui/blob/master/LICENSEs)
 
-cap-set-version-from-package CLI is a simple utility for updating using your android build no. and version by using package.json while creating apk using Capacitor.
+cap-set-version-from-package CLI is a simple utility for updating  your android build no. and version by using package.json while creating Android App using Capacitor.
 
 ## Usage/Examples
 
