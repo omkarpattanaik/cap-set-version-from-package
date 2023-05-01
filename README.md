@@ -2,9 +2,9 @@
 
 ![NPM](https://img.shields.io/npm/l/cap-set-version-from-package?style=for-the-badge)
 
-cap-set-version-from-package CLI is a simple utility for updating  your android build no. and version by using package.json while creating Android App using Capacitor.
+cap-set-version-from-package CLI is a simple utility for updating  your android build no. and version by using package.json while creating Android App using Capacitor. Very Useful in github action for capacitor.
 
-## Usage/Examples
+## Usage
 
 ### Pre Requires
 
@@ -27,18 +27,9 @@ Once done. Now you are ready to use cap-set-version-from-package
 ### To Install
 
 ```bash
-npm install -g https://github.com/omkarpattanaik/cap-set-version-from-package
+npm install cap-set-version-from-package
 ```
-
-**OR**
-```bash
-npm install -g omkarpattanaik/cap-set-version-from-package#main
-```
-
-**OR**
-```bash
-npm install -g omkarpattanaik/cap-set-version-from-package@v1.0.1
-```
+Install it in your capacitor/ionic project
 
 ### To Use
 
@@ -48,10 +39,10 @@ To use this package just use the below command
 cap-set-version-from-package
 ```
 
-if you are using **npx** then no need to install directly use this
+If you are using **npx** then no need to install, directly use this
 
 ```bash
-npx https://github.com/omkarpattanaik/cap-set-version-from-package
+npx  cap-set-version-from-package
 ```
 
 ## For developers and contibuters
