@@ -10,10 +10,13 @@
   },
   "type": "module",
   "keywords": [
-    "cli"
+    "cli","capacitor","ionic","version","android"
   ],
+  "homepage": "https://github.com/omkarpattanaik/cap-set-version-from-package",
+  "repository": "https://github.com/omkarpattanaik/cap-set-version-from-package",
+  "bugs": "https://github.com/omkarpattanaik/cap-set-version-from-package/issues",
   "author": "Omkar Pattanaik",
-  "license": "ISC",
+  "license": "MIT",
   "dependencies": {
     "figlet": "^1.5.2",
     "gradient-string": "^2.0.2",

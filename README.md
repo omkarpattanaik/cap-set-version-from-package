@@ -28,12 +28,16 @@ Once done. Now you are ready to use cap-set-version-from-package
 
 ```bash
 npm install -g https://github.com/omkarpattanaik/cap-set-version-from-package
+```
 
-//OR
+**OR**
+```bash
 npm install -g omkarpattanaik/cap-set-version-from-package#main
+```
 
-//OR
-npm install -g omkarpattanaik/cap-set-version-from-package@v1.0.0
+**OR**
+```bash
+npm install -g omkarpattanaik/cap-set-version-from-package@v1.0.1
 ```
 
 ### To Use
