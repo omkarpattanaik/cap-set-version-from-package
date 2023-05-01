@@ -104,7 +104,7 @@ const checkForAndroidPlatform = async (dir) => {
 
   if (await !fs.existsSync(packageJsonFilePath))
     throw new Error(
-      `Invalid Package : file ${gradleBuildFilePath} does not exist`
+      `Invalid Package : file ${packageJsonFilePath} does not exist`
     );
 };
 
