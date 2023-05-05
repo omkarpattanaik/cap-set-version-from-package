@@ -10,7 +10,11 @@
   },
   "type": "module",
   "keywords": [
-    "cli","capacitor","ionic","version","android"
+    "cli",
+    "capacitor",
+    "ionic",
+    "version",
+    "android"
   ],
   "homepage": "https://github.com/omkarpattanaik/cap-set-version-from-package",
   "repository": "https://github.com/omkarpattanaik/cap-set-version-from-package",
@@ -19,7 +23,6 @@
   "license": "MIT",
   "dependencies": {
     "figlet": "^1.5.2",
-    "gradient-string": "^2.0.2",
-    "inquirer": "^9.1.4"
+    "gradient-string": "^2.0.2"
   }
 }
