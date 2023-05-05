@@ -12,7 +12,6 @@ var customJsonPath = "./package.json";
 var versionKeyName = "version";
 
 const setCustomValuesfromCLI = async (argv) => {
-  console.log("argv", argv);
   customAndroidDirPath = (await argv.androidPath) ?? customAndroidDirPath;
   customJsonPath = (await argv.jsonPath) ?? customJsonPath;
   versionKeyName = (await argv.versionKey) ?? versionKeyName;
