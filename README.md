@@ -76,7 +76,7 @@ npx cap-set-version-from-package  --androidPath=../Project2/android
 
 ### Using Custom package.json / custom.json file Path
 
-If Android folder is getting created in custom location.
+If package.json is available in custom location or you want use some custom json file. 
 
 **npm**
 
@@ -95,7 +95,7 @@ npx cap-set-version-from-package  --jsonPath=../Project2/package.json
 
 ### Find value of custom version key inside package.json or custom.json
 
-If Android folder is getting created in custom location.
+If custom json file contain custom key which contains version.
 
 **npm**
 
@@ -109,7 +109,7 @@ csvfp --versionKey=proj-version
 **npx**
 
 ```bash
-npx cap-set-version-from-package  --versionKey=versionName
+npx cap-set-version-from-package --jsonPath=./Project2/custom.json --versionKey=versionName
 ```
 
 ## For developers and contibuters
