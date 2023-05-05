@@ -1,10 +1,49 @@
 #! /usr/bin/env node
-import figlet from "figlet";
-//import inquirer from "inquirer";
+import boxen from "boxen";
 import gradient from "gradient-string";
 import * as fs from "fs";
 import * as path from "path";
-import { version } from "os";
+import yargs from "yargs";
+import { hideBin } from "yargs/helpers";
+
+// Default VAlues
+var customAndroidDirPath = "./android";
+var customJsonPath = "./package.json";
+var versionKeyName = "version";
+
+const setCustomValuesfromCLI = async (argv) => {
+  console.log("argv", argv);
+  customAndroidDirPath = (await argv.androidPath) ?? customAndroidDirPath;
+  customJsonPath = (await argv.jsonPath) ?? customJsonPath;
+  versionKeyName = (await argv.versionKey) ?? versionKeyName;
+};
+
+const setCustomOptionInHelp = async () => {
+  const argValues = await yargs(await hideBin(process.argv))
+    .usage(
+      `\nUsage:
+cap-set-version-from-package <option>=value`
+    )
+    .option("androidPath", {
+      alias: "a",
+      describe: "Custom Path of Android Directory. default: ./android ",
+      type: "string",
+    })
+    .option("jsonPath", {
+      alias: "j",
+      describe:
+        "Custom Path of any package.json or custom Json file. default: ./package.json",
+      type: "string",
+    })
+    .option("versionKey", {
+      alias: "k",
+      describe:
+        "Custom key for version in package.json or custom Json file. default: version",
+      type: "string",
+    })
+    .help(true).argv;
+  return argValues;
+};
 
 const openPackageJson = async (packageJsonFilePath) => {
   return await fs.readFileSync(packageJsonFilePath, "utf-8");
@@ -21,16 +60,18 @@ const checkIfPackageVersionExist = async (file) => {
 };
 
 const getPackageVersion = async (file) => {
-  return await JSON.parse(file).version;
+  return await JSON.parse(file)[versionKeyName];
 };
 
 const convertVersionToBuildNumber = async (version) => {
-  return await parseInt(await version.replaceAll('.', '0').replaceAll('-', '0'));
+  return await parseInt(
+    await version.replaceAll(".", "0").replaceAll("-", "0")
+  );
 };
 
-const getPackageData = async (dir) => {
-  const packageJsonFilePath = await path.join(dir, "package.json");
-  let file = await openPackageJson(packageJsonFilePath);
+const getPackageData = async (customJsonDir) => {
+  const customJsonFilePath = await path.join(customJsonDir);
+  let file = await openPackageJson(customJsonFilePath);
   await checkIfPackageVersionExist(file);
   let version = await getPackageVersion(file);
   return {
@@ -85,22 +126,24 @@ const checkIfVersionCodeExist = async (file) => {
   }
 };
 
-const checkForAndroidPlatform = async (dir) => {
-  const androidFolderPath = await path.join(dir, "android");
+const checkForAndroidPlatform = async (androidDir) => {
+  const androidFolderPath = await path.join(androidDir);
 
   if (await !fs.existsSync(androidFolderPath))
     throw new Error(
       `Invalid Android platform: folder ${androidFolderPath} does not exist`
     );
 
-  const gradleBuildFilePath = path.join(dir, "android/app/build.gradle");
+  const gradleBuildFilePath = path.join(androidDir, "/app/build.gradle");
 
   if (await !fs.existsSync(gradleBuildFilePath))
     throw new Error(
       `Invalid Android platform: file ${gradleBuildFilePath} does not exist`
     );
+};
 
-  const packageJsonFilePath = path.join(dir, "package.json");
+const checkPackageJsonAvailabilty = async (customJsonDir) => {
+  const packageJsonFilePath = path.join(customJsonDir);
 
   if (await !fs.existsSync(packageJsonFilePath))
     throw new Error(
@@ -108,8 +151,8 @@ const checkForAndroidPlatform = async (dir) => {
     );
 };
 
-const setAndroidVersionAndBuild = async (dir, version, build) => {
-  const gradleBuildFilePath = await path.join(dir, "android/app/build.gradle");
+const setAndroidVersionAndBuild = async (androidDir, version, build) => {
+  const gradleBuildFilePath = await path.join(androidDir, "/app/build.gradle");
 
   let file = await openGradleBuildFile(gradleBuildFilePath);
 
@@ -119,31 +162,39 @@ const setAndroidVersionAndBuild = async (dir, version, build) => {
   await saveGradleBuildFile(gradleBuildFilePath, file);
 };
 
-const greet = async () => {
+const processAll = async () => {
   // Displaying cap-set-version-from-package CLI
   console.log(gradient.pastel.multiline("cap-set-version-from-package"));
+
+  let argv = await setCustomOptionInHelp();
+  await setCustomValuesfromCLI(argv);
 
   // Wait for 1sec
   await new Promise((resolve) => setTimeout(resolve, 1000));
   try {
-    await checkForAndroidPlatform("./");
-    let packageJson = await getPackageData("./");
+    await checkPackageJsonAvailabilty(customJsonPath);
+    await checkForAndroidPlatform(customAndroidDirPath);
+    let customJson = await getPackageData(customJsonPath);
+    console.log(`Got Package version i.e ${customJson.version} !!`);
+
     console.log(
-      await gradient.pastel.multiline(
-        `Got Package version i.e ${packageJson.version} !!`
+      await boxen(
+        "Updating to : \n Version: " +
+          customJson.version +
+          "\n Build No.: " +
+          customJson.buildNo,
+        { padding: 1, margin: 1, borderStyle: "double", borderColor: "magenta" }
       )
     );
     await setAndroidVersionAndBuild(
-      "./",
-      packageJson.version,
-      packageJson.buildNo
+      customAndroidDirPath,
+      customJson.version,
+      customJson.buildNo
     );
-    await figlet("Updated to : \n Version: " + packageJson.version+"\n Build No.: "+packageJson.buildNo, (err, data) => {
-      console.log(gradient.pastel.multiline(data));
-    });
+
     console.log(
       await gradient.pastel.multiline(
-        `Successfully Updated Version and build number in build.gradle !!`
+        `Successfully Updated Version and build number in android path: ${customAndroidDirPath}  !!`
       )
     );
   } catch (err) {
@@ -154,4 +205,4 @@ const greet = async () => {
 };
 
 // Call the greet function
-greet();
+processAll();
