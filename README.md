@@ -68,6 +68,11 @@ csvfp  --androidPath=../Project2/android
 
 ```
 
+**npx**
+
+```bash
+npx cap-set-version-from-package  --androidPath=../Project2/android
+```
 
 ### Using Custom package.json / custom.json file Path
 
@@ -82,6 +87,11 @@ cap-set-version-from-package  --jsonPath=./Project2/custom.json
 csvfp  --jsonPath=./Project2/custom.json
 ```
 
+**npx**
+
+```bash
+npx cap-set-version-from-package  --jsonPath=../Project2/package.json
+```
 
 ### Find value of custom version key inside package.json or custom.json
 
@@ -96,6 +106,11 @@ cap-set-version-from-package  --versionKey=proj-version
 csvfp --versionKey=proj-version
 ```
 
+**npx**
+
+```bash
+npx cap-set-version-from-package  --versionKey=versionName
+```
 
 ## For developers and contibuters
 
