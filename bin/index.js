@@ -10,6 +10,10 @@ import { hideBin } from "yargs/helpers";
 var customAndroidDirPath = "./android";
 var customJsonPath = "./package.json";
 var versionKeyName = "version";
+var buildGradlePath = "/app/build.gradle";
+var IOS_PLIST_FILE_PATH = "ios/App/App/Info.plist";
+var IOS_PROJECT_FILE_PATH = "ios/App/App.xcodeproj/project.pbxproj";
+
 
 const setCustomValuesfromCLI = async (argv) => {
   customAndroidDirPath = (await argv.androidPath) ?? customAndroidDirPath;
@@ -18,7 +22,7 @@ const setCustomValuesfromCLI = async (argv) => {
 };
 
 const setCustomOptionInHelp = async () => {
-  const argValues = await yargs(await hideBin(process.argv))
+  const argValues = await yargs(hideBin(process.argv))
     .usage(
       `\nUsage:
 cap-set-version-from-package <option>=value`
@@ -45,16 +49,15 @@ cap-set-version-from-package <option>=value`
 };
 
 const openPackageJson = async (packageJsonFilePath) => {
-  return await fs.readFileSync(packageJsonFilePath, "utf-8");
+  return fs.readFileSync(packageJsonFilePath, "utf-8");
 };
 
 const checkIfPackageVersionExist = async (file) => {
   // await console.log( await file);
-  if (await !file.toString().match(/(version).*/g)) {
-    throw new Error(`Could not find "version" in package.json file`, {
-      code: "ERR_ANDROID",
-      suggestions: ['Add "version" your package.json file'],
-    });
+  if (!file.toString().match(/(version).*/g)) {
+    throw new Error(`Could not find "version" in package.json file 
+    Suggestion:
+    - Add "version" key in your package.json file \n`);
   }
 };
 
@@ -63,13 +66,11 @@ const getPackageVersion = async (file) => {
 };
 
 const convertVersionToBuildNumber = async (version) => {
-  return await parseInt(
-    await version.replaceAll(".", "0").replaceAll("-", "0")
-  );
+  return parseInt(await version.replaceAll(".", "0").replaceAll("-", "0"));
 };
 
 const getPackageData = async (customJsonDir) => {
-  const customJsonFilePath = await path.join(customJsonDir);
+  const customJsonFilePath = path.join(customJsonDir);
   let file = await openPackageJson(customJsonFilePath);
   await checkIfPackageVersionExist(file);
   let version = await getPackageVersion(file);
@@ -79,12 +80,131 @@ const getPackageData = async (customJsonDir) => {
   };
 };
 
+/****************** iOS *******************************/
+
+const checkForIOSPlatform = async (dir) => {
+  const iosFolderPath = path.join(dir, "ios");
+
+  if (!fs.existsSync(iosFolderPath)) {
+    throw ( "ios platform: folder "+iosFolderPath+" does not exist"); 
+  }
+
+  const infoPlistFilePath = path.join(dir, IOS_PLIST_FILE_PATH);
+
+  if (!fs.existsSync(infoPlistFilePath)) {
+    throw new Error(`Invalid iOS platform: file ${infoPlistFilePath} does not exist Check the integrity of your ios folder 
+      Suggestions:
+      - Add again the ios platform to your project \n`);
+  }
+};
+
+const isLegacyIOSProject = async (dir) => {
+  const infoPlistFilePath = path.join(dir, IOS_PLIST_FILE_PATH);
+
+  const file = fs.readFileSync(infoPlistFilePath);
+
+  return !file.includes("$(MARKETING_VERSION)");
+};
+
+const setIOSVersionAndBuild = async (dir, version, build) => {
+  const projectFilePath = path.join(dir, IOS_PROJECT_FILE_PATH);
+
+  let file = await openIOSProjectFile(projectFilePath);
+
+  file = await setIOSVersion(file, version);
+  file = await setIOSBuild(file, build);
+
+  saveIOSProjectFile(projectFilePath, file);
+};
+
+const setIOSVersionAndBuildLegacy = async (dir, version, build) => {
+  const plistFilePath = path.join(dir, IOS_PLIST_FILE_PATH);
+
+  let file = await openInfoPlistFile(plistFilePath);
+
+  const parsed = await plist.parse(file);
+
+  await setIOSVersionLegacy(parsed, version);
+  await setIOSBuildLegacy(parsed, build);
+
+  file = await plist.build(parsed);
+
+  await saveInfoPlistFile(plistFilePath, file);
+};
+
+const openIOSProjectFile = async (projectFilePath) => {
+  try {
+    return fs.readFileSync(projectFilePath, "utf-8");
+  } catch (error) {
+    throw new Error(
+      `Invalid iOS project file: file ${projectFilePath} does not exist`
+    );
+  }
+};
+
+const saveIOSProjectFile = async (projectFilePath, file) => {
+  fs.writeFileSync(projectFilePath, file, "utf-8");
+};
+
+const setIOSVersion = async (file, version) => {
+  await checkIfVersionExist(file);
+  return await file.replace(
+    /(MARKETING_VERSION = ).*/g,
+    `MARKETING_VERSION = ${version};`
+  );
+};
+
+const checkIfVersionExist = async (file) => {
+  if (await file.match(/(MARKETING_VERSION = ).*/g)) return;
+  throw new Error(`Could not find "MARKETING_VERSION" in project.pbxproj file
+    Suggestions: 
+    - Check if "MARKETING_VERSION" is found inside file ios/App/App.xcodeproj/project.pbxproj file.
+    - Update you iOS xCode project to auto manage the project version \n`);
+};
+
+const setIOSBuild = async (file, build) => {
+  await checkIfBuildNumberExist(file);
+  return await file.replace(
+    /(CURRENT_PROJECT_VERSION = ).*/g,
+    `CURRENT_PROJECT_VERSION = ${build};`
+  );
+};
+
+const checkIfBuildNumberExist = async (file) => {
+  if (await file.match(/(CURRENT_PROJECT_VERSION = ).*/g)) return;
+
+  throw new Error(`Could not find "CURRENT_PROJECT_VERSION" in project.pbxproj file
+    Suggestions: 
+    - Check if "CURRENT_PROJECT_VERSION" is found inside file ios/App/App.xcodeproj/project.pbxproj file.
+    - Update you iOS xCode project to auto manage the project version \n`);
+};
+
+const openInfoPlistFile = async (plistFilePath) => {
+  return fs.readFileSync(plistFilePath, "utf-8");
+};
+
+const saveInfoPlistFile = async (plistFilePath, file) => {
+  fs.writeFileSync(plistFilePath, file, "utf-8");
+};
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const setIOSVersionLegacy = async (infoPlist, version) => {
+  infoPlist.CFBundleShortVersionString = await version;
+};
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const setIOSBuildLegacy = async (infoPlist, build) => {
+  infoPlist.CFBundleVersion = await build.toString();
+};
+
+/********************** Android *******************************/
+
 const openGradleBuildFile = async (gradleBuildFilePath) => {
-  return await fs.readFileSync(gradleBuildFilePath, "utf-8");
+  return fs.readFileSync(gradleBuildFilePath, "utf-8");
 };
 
 const saveGradleBuildFile = async (gradleBuildFilePath, file) => {
-  await fs.writeFileSync(gradleBuildFilePath, file.toString(), "utf-8");
+  fs.writeFileSync(gradleBuildFilePath, file.toString(), "utf-8");
 };
 
 const setAndroidVersion = async (file, version) => {
@@ -94,13 +214,11 @@ const setAndroidVersion = async (file, version) => {
 
 const checkIfVersionNameExist = async (file) => {
   // await console.log( await file);
-  if (await !file.toString().match(/(versionName).*/g)) {
+  if (!file.toString().match(/(versionName).*/g)) {
     throw new Error(
-      `Could not find "versionName" in android/app/build.grade file`,
-      {
-        code: "ERR_ANDROID",
-        suggestions: ['Add "versionName" your build.gradle file'],
-      }
+      `Could not find "versionName" in android/app/build.gradle file
+        Suggestions:
+        - Add "versionName" your build.gradle file \n`
     );
   }
 };
@@ -114,28 +232,26 @@ const setAndroidBuild = async (file, build) => {
 
 const checkIfVersionCodeExist = async (file) => {
   //await console.log( await file);
-  if (await !file.toString().match(/(versionCode).*/g)) {
+  if (!file.toString().match(/(versionCode).*/g)) {
     throw new Error(
-      `Could not find "versionCode" in android/app/build.grade file`,
-      {
-        code: "ERR_ANDROID",
-        suggestions: ['Add "versionCode" to your build.gradle file'],
-      }
+      `Could not find "versionCode" in android/app/build.gradle file
+        Suggestions:
+        - Add "versionCode" to your build.gradle file \n`
     );
   }
 };
 
 const checkForAndroidPlatform = async (androidDir) => {
-  const androidFolderPath = await path.join(androidDir);
+  const androidFolderPath = path.join(androidDir);
 
-  if (await !fs.existsSync(androidFolderPath))
-    throw new Error(
-      `Invalid Android platform: folder ${androidFolderPath} does not exist`
+  if (!fs.existsSync(androidFolderPath))
+    throw (
+      "Android platform: folder "+androidFolderPath+" does not exist"
     );
 
-  const gradleBuildFilePath = path.join(androidDir, "/app/build.gradle");
+  const gradleBuildFilePath = path.join(androidDir, buildGradlePath);
 
-  if (await !fs.existsSync(gradleBuildFilePath))
+  if (!fs.existsSync(gradleBuildFilePath))
     throw new Error(
       `Invalid Android platform: file ${gradleBuildFilePath} does not exist`
     );
@@ -144,14 +260,14 @@ const checkForAndroidPlatform = async (androidDir) => {
 const checkPackageJsonAvailabilty = async (customJsonDir) => {
   const packageJsonFilePath = path.join(customJsonDir);
 
-  if (await !fs.existsSync(packageJsonFilePath))
+  if (!fs.existsSync(packageJsonFilePath))
     throw new Error(
       `Invalid Package : file ${packageJsonFilePath} does not exist`
     );
 };
 
 const setAndroidVersionAndBuild = async (androidDir, version, build) => {
-  const gradleBuildFilePath = await path.join(androidDir, "/app/build.gradle");
+  const gradleBuildFilePath = path.join(androidDir, buildGradlePath);
 
   let file = await openGradleBuildFile(gradleBuildFilePath);
 
@@ -170,14 +286,14 @@ const processAll = async () => {
 
   // Wait for 1sec
   await new Promise((resolve) => setTimeout(resolve, 1000));
+  let customJson;
   try {
     await checkPackageJsonAvailabilty(customJsonPath);
-    await checkForAndroidPlatform(customAndroidDirPath);
-    let customJson = await getPackageData(customJsonPath);
+    customJson = await getPackageData(customJsonPath);
     console.log(`Got Package version i.e ${customJson.version} !!`);
 
     console.log(
-      await boxen(
+      boxen(
         "Updating to : \n Version: " +
           customJson.version +
           "\n Build No.: " +
@@ -185,6 +301,14 @@ const processAll = async () => {
         { padding: 1, margin: 1, borderStyle: "double", borderColor: "magenta" }
       )
     );
+  } catch (err) {
+    console.error(err);
+  } finally {
+    gradient.pastel.multiline(`cya `);
+  }
+
+  try {
+    await checkForAndroidPlatform(customAndroidDirPath);
     await setAndroidVersionAndBuild(
       customAndroidDirPath,
       customJson.version,
@@ -192,14 +316,44 @@ const processAll = async () => {
     );
 
     console.log(
-      await gradient.pastel.multiline(
+      gradient.pastel.multiline(
         `Successfully Updated Version and build number in android path: ${customAndroidDirPath}  !!`
       )
     );
   } catch (err) {
-    console.error(err);
+    typeof err == "string"?console.warn("WARNING: ",err) :console.error(err);
   } finally {
-    await gradient.pastel.multiline(`cya `);
+    gradient.pastel.multiline(`cya `);
+  }
+
+  try {
+    await checkForIOSPlatform("./");
+
+    // In legacy xCode projects, the version information was stored inside info.plist file.
+    // For modern projects, it is stored in project.pbxproj file.
+    // The command will handle both legacy and modern projects.
+    if (await isLegacyIOSProject("./")) {
+      console.warn(
+        "Legacy iOS project detected, please update to the latest xCode"
+      );
+      await setIOSVersionAndBuildLegacy(
+        "./",
+        customJson.version,
+        customJson.buildNo
+      );
+    } else {
+      await setIOSVersionAndBuild("./", customJson.version, customJson.buildNo);
+    }
+
+    console.log(
+      gradient.pastel.multiline(
+        `Successfully Updated Version and build number in ios path: ./ios !!`
+      )
+    );
+  } catch (err) {
+    typeof err == "string"?console.warn("WARNING: ",err) :console.error(err);
+  } finally {
+    gradient.pastel.multiline(`cya `);
   }
 };
 
