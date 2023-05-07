@@ -1,11 +1,5 @@
-# cap-set-version-from-package CLI
+<img src="header.svg"  width="100%" alt="Click to see the source">
 
-<div style="display:flex;justify-content:center">
-    <div style="background-color: black;border: 2px solid #85144b; width:50vw; text-align:center">
-        <div style="color:#01ff70;font-size:2.5rem">cap-set-version-from-package</div>
-        <div style="color:lightgrey;;font-size:3.5rem">🍎🤖CLI</div>
-    </div>
-</div>
 
 ![NPM](https://img.shields.io/npm/l/cap-set-version-from-package?style=flat-square)
 ![npm](https://img.shields.io/npm/v/cap-set-version-from-package?style=flat-square)
