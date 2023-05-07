@@ -12,20 +12,23 @@ cap-set-version-from-package CLI is a simple utility for updating your android b
 
 ### Pre Requires
 
-You must have package.json file with update version. You must have android directory added to your capacitor project using
+You must have package.json file with update version. You must have android or ios directory added to your capacitor project using
 
 ```bash
 # to install capacitor Android dependency
-npm install @capacitor/android
+npm install @capacitor/android @capacitor/android
 
 # to add Android directory
 npx cap add android
+
+# to add ios directory
+npx cap add ios
 
 # to clone your dist to android
 npx cap sync
 
 ```
-
+Incase if any directory is missing, still it will work on existing directory with a WARNING. 
 Once done. Now you are ready to use cap-set-version-from-package
 
 ### To Install
@@ -57,7 +60,7 @@ npx  cap-set-version-from-package
 
 ### Using Custom Android Path
 
-If Android folder is getting created in custom location.
+If Android folder is getting created or available in custom location.
 
 **npm**
 
@@ -65,14 +68,34 @@ If Android folder is getting created in custom location.
 cap-set-version-from-package  --androidPath=../Project2/android
 
 # OR use short form
-csvfp  --androidPath=../Project2/android
+csvfp  -a=../Project2/android
 
 ```
 
 **npx**
 
 ```bash
-npx cap-set-version-from-package  --androidPath=../Project2/android
+npx cap-set-version-from-package  -a=../Project2/android
+```
+
+### Using Custom ios Path
+
+If ios folder is getting created or available in custom location.
+
+**npm**
+
+```bash
+cap-set-version-from-package  --iosPath=../Project2/ios
+
+# OR use short form
+csvfp  -i=../Project2/android
+
+```
+
+**npx**
+
+```bash
+npx cap-set-version-from-package  -i=../Project2/ios
 ```
 
 ### Using Custom package.json / custom.json file Path
@@ -85,7 +108,7 @@ If package.json is available in custom location or you want use some custom json
 cap-set-version-from-package  --jsonPath=./Project2/custom.json
 
 # OR use short form
-csvfp  --jsonPath=./Project2/custom.json
+csvfp  -j=./Project2/custom.json
 ```
 
 **npx**
@@ -104,13 +127,13 @@ If custom json file contain custom key which contains version.
 cap-set-version-from-package  --versionKey=proj-version
 
 # OR use short form
-csvfp --versionKey=proj-version
+csvfp -k=proj-version
 ```
 
 **npx**
 
 ```bash
-npx cap-set-version-from-package --jsonPath=./Project2/custom.json --versionKey=versionName
+npx cap-set-version-from-package -j=./Project2/custom.json -k=versionName
 ```
 
 ## For developers and contibuters
@@ -139,8 +162,8 @@ npm rm -g
 
 ## New Feature
 
-- Versioning iOS build. **_[Testing In progress]_**
-- Customization for iOS build versioning. **_[Testing In progress]_**
+- Versioning iOS build. 
+- Customization for iOS build versioning. 
 
 ## Coming Soon
 

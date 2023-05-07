@@ -11,10 +11,9 @@ var customAndroidDirPath = "./android";
 var customJsonPath = "./package.json";
 var versionKeyName = "version";
 var buildGradlePath = "/app/build.gradle";
-var customIOSPath="./ios";
+var customIOSPath = "./ios";
 var iOSPlistPath = "/App/App/Info.plist";
 var iOSProjectFilePath = "/App/App.xcodeproj/project.pbxproj";
-
 
 const setCustomValuesfromCLI = async (argv) => {
   customAndroidDirPath = (await argv.androidPath) ?? customAndroidDirPath;
@@ -27,7 +26,9 @@ const setCustomOptionInHelp = async () => {
   const argValues = await yargs(hideBin(process.argv))
     .usage(
       `\nUsage:
-cap-set-version-from-package <option>=value`
+cap-set-version-from-package <option>=value
+\n #OR you can use below but it does not works on npx without installation\n
+csvfp <option>=value`
     )
     .option("androidPath", {
       alias: "a",
@@ -93,7 +94,7 @@ const checkForIOSPlatform = async (iOSdir) => {
   const iosFolderPath = path.join(iOSdir);
 
   if (!fs.existsSync(iosFolderPath)) {
-    throw ( "ios platform: folder "+iosFolderPath+" does not exist"); 
+    throw "ios platform: folder " + iosFolderPath + " does not exist";
   }
 
   const infoPlistFilePath = path.join(iOSdir, iOSPlistPath);
@@ -252,9 +253,7 @@ const checkForAndroidPlatform = async (androidDir) => {
   const androidFolderPath = path.join(androidDir);
 
   if (!fs.existsSync(androidFolderPath))
-    throw (
-      "Android platform: folder "+androidFolderPath+" does not exist"
-    );
+    throw "Android platform: folder " + androidFolderPath + " does not exist";
 
   const gradleBuildFilePath = path.join(androidDir, buildGradlePath);
 
@@ -293,11 +292,11 @@ const processAll = async () => {
 
   // Wait for 1sec
   await new Promise((resolve) => setTimeout(resolve, 1000));
-  let customJson;
   try {
+    let customJson;
     await checkPackageJsonAvailabilty(customJsonPath);
     customJson = await getPackageData(customJsonPath);
-    console.log(`Found Package version i.e ${customJson.version} !!`);
+    console.log(`Found Package version i.e ${customJson.version} `);
 
     console.log(
       boxen(
@@ -308,59 +307,67 @@ const processAll = async () => {
         { padding: 1, margin: 1, borderStyle: "double", borderColor: "magenta" }
       )
     );
-  } catch (err) {
-    console.error(err);
-  } finally {
-    gradient.pastel.multiline(`cya `);
-  }
 
-  try {
-    await checkForAndroidPlatform(customAndroidDirPath);
-    await setAndroidVersionAndBuild(
-      customAndroidDirPath,
-      customJson.version,
-      customJson.buildNo
-    );
-
-    console.log(
-      gradient.pastel.multiline(
-        `Successfully Updated Version and build number in android path: ${customAndroidDirPath}  !!`
-      )
-    );
-  } catch (err) {
-    typeof err == "string"?console.warn("WARNING: ",err) :console.error(err);
-  } finally {
-    gradient.pastel.multiline(`cya `);
-  }
-
-  try {
-    await checkForIOSPlatform(customIOSPath);
-
-    // In legacy xCode projects, the version information was stored inside info.plist file.
-    // For modern projects, it is stored in project.pbxproj file.
-    // The command will handle both legacy and modern projects.
-    if (await isLegacyIOSProject(customIOSPath)) {
-      console.warn(
-        "Legacy iOS project detected, please update to the latest xCode"
-      );
-      await setIOSVersionAndBuildLegacy(
-        customIOSPath,
+    try {
+      await checkForAndroidPlatform(customAndroidDirPath);
+      await setAndroidVersionAndBuild(
+        customAndroidDirPath,
         customJson.version,
         customJson.buildNo
       );
-    } else {
-      await setIOSVersionAndBuild(customIOSPath, customJson.version, customJson.buildNo);
+
+      console.log(
+        gradient.pastel.multiline(
+          `Successfully Updated Version and build number in android path: ${customAndroidDirPath}  !!`
+        )
+      );
+    } catch (err) {
+      typeof err == "string"
+        ? console.warn("WARNING: ", err)
+        : console.error(err);
+    } finally {
+      gradient.pastel.multiline(`cya `);
     }
 
-    console.log(
-      gradient.pastel.multiline(
-        `Successfully Updated Version and build number in ios path: ${customIOSPath} !!`
-      )
-    );
+    try {
+      await checkForIOSPlatform(customIOSPath);
+
+      // In legacy xCode projects, the version information was stored inside info.plist file.
+      // For modern projects, it is stored in project.pbxproj file.
+      // The command will handle both legacy and modern projects.
+      if (await isLegacyIOSProject(customIOSPath)) {
+        console.warn(
+          "Legacy iOS project detected, please update to the latest xCode"
+        );
+        await setIOSVersionAndBuildLegacy(
+          customIOSPath,
+          customJson.version,
+          customJson.buildNo
+        );
+      } else {
+        await setIOSVersionAndBuild(
+          customIOSPath,
+          customJson.version,
+          customJson.buildNo
+        );
+      }
+
+      console.log(
+        gradient.pastel.multiline(
+          `Successfully Updated Version and build number in ios path: ${customIOSPath} !!`
+        )
+      );
+    } catch (err) {
+      typeof err == "string"
+        ? console.warn("WARNING: ", err)
+        : console.error(err);
+    } finally {
+      gradient.pastel.multiline(`cya `);
+    }
   } catch (err) {
-    typeof err == "string"?console.warn("WARNING: ",err) :console.error(err);
-  } finally {
-    gradient.pastel.multiline(`cya `);
+    typeof err == "string"
+      ? console.warn("WARNING: ", err)
+      : console.error(err);
   }
 };
 

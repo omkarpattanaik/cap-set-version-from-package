@@ -1,7 +1,8 @@
 {
   "name": "cap-set-version-from-package",
-  "version": "1.1.2",
-  "description": "cap-set-version-from-package is a simple CLI for updating gradle.build with package.json version",
+  "version": "2.0.0",
+  "description": "cap-set-version-from-package is a simple CLI for updating Android or iOS version with package.json version",
+  "main": "./bin/index.js",
   "bin": {
     "cap-set-version-from-package": "./bin/index.js",
     "csvfp":"./bin/index.js"
@@ -15,7 +16,8 @@
     "capacitor",
     "ionic",
     "version",
-    "android"
+    "android",
+    "ios"
   ],
   "homepage": "https://github.com/omkarpattanaik/cap-set-version-from-package",
   "repository": "https://github.com/omkarpattanaik/cap-set-version-from-package",
