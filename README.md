@@ -1,5 +1,12 @@
 # cap-set-version-from-package CLI
 
+<div style="display:flex;justify-content:center">
+    <div style="background-color: black;border: 2px solid #85144b; width:50vw; text-align:center">
+        <div style="color:#01ff70;font-size:2.5rem">cap-set-version-from-package</div>
+        <div style="color:lightgrey;;font-size:3.5rem">🍎🤖CLI</div>
+    </div>
+</div>
+
 ![NPM](https://img.shields.io/npm/l/cap-set-version-from-package?style=flat-square)
 ![npm](https://img.shields.io/npm/v/cap-set-version-from-package?style=flat-square)
 ![GitHub code size in bytes](https://img.shields.io/github/languages/code-size/omkarpattanaik/cap-set-version-from-package?style=flat-square)
@@ -76,7 +83,7 @@ npx cap-set-version-from-package  --androidPath=../Project2/android
 
 ### Using Custom package.json / custom.json file Path
 
-If package.json is available in custom location or you want use some custom json file. 
+If package.json is available in custom location or you want use some custom json file.
 
 **npm**
 
@@ -136,11 +143,11 @@ npm rm -g
 
 - [@omkarpattanaik](https://www.github.com/omkarpattanaik)
 
-## New Feature 
+## New Feature
 
-- Versioning iOS build. ***[Testing In progress]***
-- Customization for iOS build versioning. ***[Testing In progress]***
-  
+- Versioning iOS build. **_[Testing In progress]_**
+- Customization for iOS build versioning. **_[Testing In progress]_**
+
 ## Coming Soon
 
 - Picking paths from capacitor.config.json.
