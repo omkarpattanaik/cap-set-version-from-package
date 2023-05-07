@@ -11,14 +11,16 @@ var customAndroidDirPath = "./android";
 var customJsonPath = "./package.json";
 var versionKeyName = "version";
 var buildGradlePath = "/app/build.gradle";
-var IOS_PLIST_FILE_PATH = "ios/App/App/Info.plist";
-var IOS_PROJECT_FILE_PATH = "ios/App/App.xcodeproj/project.pbxproj";
+var customIOSPath="./ios";
+var iOSPlistPath = "/App/App/Info.plist";
+var iOSProjectFilePath = "/App/App.xcodeproj/project.pbxproj";
 
 
 const setCustomValuesfromCLI = async (argv) => {
   customAndroidDirPath = (await argv.androidPath) ?? customAndroidDirPath;
   customJsonPath = (await argv.jsonPath) ?? customJsonPath;
   versionKeyName = (await argv.versionKey) ?? versionKeyName;
+  customIOSPath = (await argv.iosPath) ?? customIOSPath;
 };
 
 const setCustomOptionInHelp = async () => {
@@ -30,6 +32,11 @@ cap-set-version-from-package <option>=value`
     .option("androidPath", {
       alias: "a",
       describe: "Custom Path of Android Directory. default: ./android ",
+      type: "string",
+    })
+    .option("iosPath", {
+      alias: "i",
+      describe: "Custom Path of ios Directory. default: ./ios ",
       type: "string",
     })
     .option("jsonPath", {
@@ -82,14 +89,14 @@ const getPackageData = async (customJsonDir) => {
 
 /****************** iOS *******************************/
 
-const checkForIOSPlatform = async (dir) => {
-  const iosFolderPath = path.join(dir, "ios");
+const checkForIOSPlatform = async (iOSdir) => {
+  const iosFolderPath = path.join(iOSdir);
 
   if (!fs.existsSync(iosFolderPath)) {
     throw ( "ios platform: folder "+iosFolderPath+" does not exist"); 
   }
 
-  const infoPlistFilePath = path.join(dir, IOS_PLIST_FILE_PATH);
+  const infoPlistFilePath = path.join(iOSdir, iOSPlistPath);
 
   if (!fs.existsSync(infoPlistFilePath)) {
     throw new Error(`Invalid iOS platform: file ${infoPlistFilePath} does not exist Check the integrity of your ios folder 
@@ -98,16 +105,16 @@ const checkForIOSPlatform = async (dir) => {
   }
 };
 
-const isLegacyIOSProject = async (dir) => {
-  const infoPlistFilePath = path.join(dir, IOS_PLIST_FILE_PATH);
+const isLegacyIOSProject = async (iOSdir) => {
+  const infoPlistFilePath = path.join(iOSdir, iOSPlistPath);
 
   const file = fs.readFileSync(infoPlistFilePath);
 
   return !file.includes("$(MARKETING_VERSION)");
 };
 
-const setIOSVersionAndBuild = async (dir, version, build) => {
-  const projectFilePath = path.join(dir, IOS_PROJECT_FILE_PATH);
+const setIOSVersionAndBuild = async (iOSdir, version, build) => {
+  const projectFilePath = path.join(iOSdir, iOSProjectFilePath);
 
   let file = await openIOSProjectFile(projectFilePath);
 
@@ -117,8 +124,8 @@ const setIOSVersionAndBuild = async (dir, version, build) => {
   saveIOSProjectFile(projectFilePath, file);
 };
 
-const setIOSVersionAndBuildLegacy = async (dir, version, build) => {
-  const plistFilePath = path.join(dir, IOS_PLIST_FILE_PATH);
+const setIOSVersionAndBuildLegacy = async (iOSdir, version, build) => {
+  const plistFilePath = path.join(iOSdir, iOSPlistPath);
 
   let file = await openInfoPlistFile(plistFilePath);
 
@@ -290,7 +297,7 @@ const processAll = async () => {
   try {
     await checkPackageJsonAvailabilty(customJsonPath);
     customJson = await getPackageData(customJsonPath);
-    console.log(`Got Package version i.e ${customJson.version} !!`);
+    console.log(`Found Package version i.e ${customJson.version} !!`);
 
     console.log(
       boxen(
@@ -327,27 +334,27 @@ const processAll = async () => {
   }
 
   try {
-    await checkForIOSPlatform("./");
+    await checkForIOSPlatform(customIOSPath);
 
     // In legacy xCode projects, the version information was stored inside info.plist file.
     // For modern projects, it is stored in project.pbxproj file.
     // The command will handle both legacy and modern projects.
-    if (await isLegacyIOSProject("./")) {
+    if (await isLegacyIOSProject(customIOSPath)) {
       console.warn(
         "Legacy iOS project detected, please update to the latest xCode"
       );
       await setIOSVersionAndBuildLegacy(
-        "./",
+        customIOSPath,
         customJson.version,
         customJson.buildNo
       );
     } else {
-      await setIOSVersionAndBuild("./", customJson.version, customJson.buildNo);
+      await setIOSVersionAndBuild(customIOSPath, customJson.version, customJson.buildNo);
     }
 
     console.log(
       gradient.pastel.multiline(
-        `Successfully Updated Version and build number in ios path: ./ios !!`
+        `Successfully Updated Version and build number in ios path: ${customIOSPath} !!`
       )
     );
   } catch (err) {

@@ -136,7 +136,11 @@ npm rm -g
 
 - [@omkarpattanaik](https://www.github.com/omkarpattanaik)
 
+## New Feature 
+
+- Versioning iOS build. ***[Testing In progress]***
+- Customization for iOS build versioning. ***[Testing In progress]***
+  
 ## Coming Soon
 
-- Versioning IOS build
-- Customization for IOS build versioning
+- Picking paths from capacitor.config.json.
