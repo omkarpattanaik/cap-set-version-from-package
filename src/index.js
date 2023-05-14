@@ -25,7 +25,7 @@ const setCustomValuesfromCLI = async (argv) => {
 const setCustomOptionInHelp = async () => {
   const argValues = await yargs(hideBin(process.argv))
     .usage(
-      `\nUsage:
+      `\nUsage::
 cap-set-version-from-package <option>=value
 \n #OR you can use below but it does not works on npx without installation\n
 csvfp <option>=value`
@@ -290,8 +290,7 @@ const processAll = async () => {
   let argv = await setCustomOptionInHelp();
   await setCustomValuesfromCLI(argv);
 
-  // Wait for 1sec
-  await new Promise((resolve) => setTimeout(resolve, 1000));
+
   try {
     let customJson;
     await checkPackageJsonAvailabilty(customJsonPath);

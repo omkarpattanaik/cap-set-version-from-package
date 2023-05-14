@@ -1,14 +1,19 @@
 {
   "name": "cap-set-version-from-package",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "description": "cap-set-version-from-package is a simple CLI for updating Android or iOS version with package.json version",
-  "main": "./bin/index.js",
+  "main": "./bin/cap-set-version-from-package.min.js",
   "bin": {
-    "cap-set-version-from-package": "./bin/index.js",
-    "csvfp":"./bin/index.js"
+    "cap-set-version-from-package": "./bin/cap-set-version-from-package.min.js",
+    "csvfp": "./bin/cap-set-version-from-package.min.js"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "look":"echo 'Know me #@#@$'",
+    "test": "jest",
+    "build": "npm run minify",
+    "minify": "esbuild ./src/index.js --minify  --outfile=./bin/cap-set-version-from-package.min.js",
+    "start": "esbuild ./src/index.js --outfile=./bin/cap-set-version-from-package.min.js --watch",
+    "srcmap": "esbuild ./src/index.js --outfile=./dist/cap-set-version-from-package.min.js --sourcemap"
   },
   "type": "module",
   "keywords": [
@@ -28,5 +33,10 @@
     "boxen": "^7.0.2",
     "gradient-string": "^2.0.2",
     "yargs": "^17.7.2"
+  },
+  "devDependencies": {
+    "esbuild": "^0.17.19",
+    "jest": "^29.5.0",
+    "shelljs": "^0.8.5"
   }
 }

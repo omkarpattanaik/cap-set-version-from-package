@@ -8,6 +8,7 @@ pnpm-debug.log*
 lerna-debug.log*
 
 node_modules
+bin
 dist
 dist-ssr
 *.local
@@ -27,3 +28,7 @@ package-lock.json
 pnpm-lock.yaml
 yarn.lock
 dist-electron
+
+__tests__
+coverage
+test-env

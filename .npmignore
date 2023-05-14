@@ -1,2 +1,8 @@
 test
 *.test.js
+src
+__tests__
+coverage
+example
+test_sample
+test-env
