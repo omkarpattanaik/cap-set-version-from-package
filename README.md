@@ -6,30 +6,9 @@
 ![GitHub code size in bytes](https://img.shields.io/github/languages/code-size/omkarpattanaik/cap-set-version-from-package?style=flat-square)
 ![Snyk Vulnerabilities for npm scoped package](https://img.shields.io/snyk/vulnerabilities/npm/cap-set-version-from-package?style=flat-square)
 
-cap-set-version-from-package CLI is a simple utility for updating your android build no. and version by using package.json while creating Android App using Capacitor. Very Useful in github action for capacitor.
+cap-set-version-from-package CLI is a simple utility for updating your Android or iOS build no. and version by using package.json while creating Android or iOS App using Capacitor. Very Useful in Github action for capacitor.
 
 ## Usage
-
-### Pre Requires
-
-You must have package.json file with update version. You must have android or ios directory added to your capacitor project using
-
-```bash
-# to install capacitor Android dependency
-npm install @capacitor/android @capacitor/android
-
-# to add Android directory
-npx cap add android
-
-# to add ios directory
-npx cap add ios
-
-# to clone your dist to android
-npx cap sync
-
-```
-Incase if any directory is missing, still it will work on existing directory with a WARNING. 
-Once done. Now you are ready to use cap-set-version-from-package
 
 ### To Install
 
@@ -55,6 +34,29 @@ If you are using **npx** then no need to install, directly use this
 ```bash
 npx  cap-set-version-from-package
 ```
+
+### Pre Requires
+
+You must have package.json file with update version. You may have android or ios directory added to your capacitor project using:
+
+```bash
+# to install capacitor Android dependency
+npm install @capacitor/android @capacitor/android
+
+# to add Android directory
+npx cap add android
+
+# to add ios directory
+npx cap add ios
+
+# to clone your dist to android
+npx cap sync
+
+```
+Incase if any directory is missing, still it will work on existing directory with a WARNING. 
+Once done. Now you are ready to use cap-set-version-from-package
+
+
 
 ## Customise Your Versioning
 
