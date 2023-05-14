@@ -1,6 +1,6 @@
 {
   "name": "cap-set-version-from-package",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "cap-set-version-from-package is a simple CLI for updating Android or iOS version with package.json version",
   "main": "./bin/index.js",
   "bin": {
