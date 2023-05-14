@@ -7,7 +7,7 @@
     "cap-set-version-from-package": "./bin/cap-set-version-from-package.min.js",
     "csvfp": "./bin/cap-set-version-from-package.min.js"
   },
-  "scripts": {
+  "scripts": { 
     "look":"echo 'Know me #@#@$'",
     "test": "jest",
     "build": "npm run minify",
