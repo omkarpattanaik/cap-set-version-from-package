@@ -17,6 +17,8 @@ jobs:
       - name: NPM Install dependencies
         run: npm install
       - name: Install cap-set-version-from-package test
-        run: sudo npm install -g https://github.com/omkarpattanaik/cap-set-version-from-package
+        run: npm install -g https://github.com/omkarpattanaik/cap-set-version-from-package
+      - name: Test cap-set-version-from-package
+        run: cap-set-version-from-package --help
       - name: Functional test
         run: npm run test
