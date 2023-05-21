@@ -7,7 +7,7 @@ jobs:
   Test_cap-set-version-from-package_Package_Build:
     if: contains(github.event.head_commit.message, 'FuncTest')
     name: Test cap-set-version-from-package workability
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout repo
         uses: actions/checkout@v2
@@ -18,6 +18,8 @@ jobs:
         run: npm install
       - name: Install cap-set-version-from-package test
         run: npm install -g https://github.com/omkarpattanaik/cap-set-version-from-package
+      - name: npm list
+        run: npm -g ls
       - name: Test cap-set-version-from-package
         run: cap-set-version-from-package --help
       - name: Functional test
