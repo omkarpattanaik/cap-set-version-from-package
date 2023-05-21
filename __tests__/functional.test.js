@@ -8,7 +8,9 @@ describe("Starting Functional Test cases...", () => {
     root = shell.pwd().stdout;
     shell.echo("root: ", root);
     shell.echo("**** Application Testing Starts ****");
-    shell.exec("npm i -g", { silent: false });
+    shell.exec("npm ls", { silent: false });
+    console.log(shell.ls("./").stdout);
+    shell.exec("npm link", { silent: false });
     shell.mkdir("test-env");
     shell.cd("test-env");
   });
