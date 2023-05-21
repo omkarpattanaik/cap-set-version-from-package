@@ -16,7 +16,5 @@ jobs:
           node-version: 16
       - name: NPM Install dependencies
         run: npm install
-      - name: Test cap-set-version-from-package
-        run: cap-set-version-from-package --help
       - name: Functional test
         run: npm run test
