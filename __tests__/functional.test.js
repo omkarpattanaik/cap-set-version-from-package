@@ -8,14 +8,14 @@ describe("Starting Functional Test cases...", () => {
     root = shell.pwd().stdout;
     shell.echo("root: ", root);
     shell.echo("**** Application Testing Starts ****");
-    shell.exec("npm i -g", { silent: true });
+    shell.exec("npm i -g", { silent: false });
     shell.mkdir("test-env");
     shell.cd("test-env");
   });
   test("should throw error i.e 'Invalid Package : file' if package.json is not found", async () => {
     expect(
       shell
-        .exec("csvfp", { silent: true })
+        .exec("csvfp", { silent: false })
         .stderr.includes("Invalid Package : file")
     ).toBeTruthy();
   });
@@ -24,7 +24,7 @@ describe("Starting Functional Test cases...", () => {
     shell.cd("sample_app");
     expect(
       shell
-        .exec("csvfp", { silent: true })
+        .exec("csvfp", { silent: false })
         .stderr.includes(
           "WARNING:  Android platform: folder android does not exist"
         )
@@ -33,28 +33,28 @@ describe("Starting Functional Test cases...", () => {
   test("should throw Warning  i.e 'ios does not exist' if ios dir is not found", async () => {
     expect(
       shell
-        .exec("csvfp", { silent: true })
+        .exec("csvfp", { silent: false })
         .stderr.includes("WARNING:  ios platform: folder ios does not exist")
     ).toBeTruthy();
   });
   test("should Update Version of Platform Android", async () => {
-    shell.exec("npm install", { silent: true });
-    shell.exec("npm run build", { silent: true });
-    shell.exec("npx cap add android", { silent: true });
+    shell.exec("npm install", { silent: false });
+    shell.exec("npm run build", { silent: false });
+    shell.exec("npx cap add android", { silent: false });
     expect(
       shell
-        .exec("csvfp", { silent: true })
+        .exec("csvfp", { silent: false })
         .stdout.includes(
           "Successfully Updated Version and build number in android path:"
         )
     ).toBeTruthy();
   });
   test("should Update Version of Platform iOS", async () => {
-    shell.exec("npm run build", { silent: true });
-    shell.exec("npx cap add ios", { silent: true });
+    shell.exec("npm run build", { silent: false });
+    shell.exec("npx cap add ios", { silent: false });
     expect(
       shell
-        .exec("csvfp", { silent: true })
+        .exec("csvfp", { silent: false })
         .stdout.includes(
           "Successfully Updated Version and build number in ios path:"
         )
@@ -64,7 +64,7 @@ describe("Starting Functional Test cases...", () => {
     shell.sed("-i", "versionName", "ver-name", "./android/app/build.gradle");
     expect(
       shell
-        .exec("csvfp", { silent: true })
+        .exec("csvfp", { silent: false })
         .stderr.includes(
           'Could not find "versionName" in android/app/build.gradle file'
         )
@@ -75,7 +75,7 @@ describe("Starting Functional Test cases...", () => {
     const gradleBuildFilePath = path.join("./android", "/app/build.gradle");
     expect(
       shell
-        .exec("csvfp", { silent: true })
+        .exec("csvfp", { silent: false })
         .stderr.includes(
           `Invalid Android platform: file ${gradleBuildFilePath} does not exist`
         )
@@ -93,7 +93,7 @@ describe("Starting Functional Test cases...", () => {
     );
     expect(
       shell
-        .exec("csvfp", { silent: true })
+        .exec("csvfp", { silent: false })
         .stderr.includes(
           `Could not find "MARKETING_VERSION" in project.pbxproj file`
         )
@@ -108,7 +108,7 @@ describe("Starting Functional Test cases...", () => {
     //console.log("Removing; ",shell.exec("csvfp").stderr);
     expect(
       shell
-        .exec("csvfp", { silent: true })
+        .exec("csvfp", { silent: false })
         .stderr.includes(
           `Invalid iOS project file: file ${iOSProjectFilePath} does not exist`
         )
@@ -117,7 +117,7 @@ describe("Starting Functional Test cases...", () => {
 
   afterAll(() => {
     // Clears the test-env dir after tseting is done
-    shell.exec("npm rm -g", { silent: true });
+    shell.exec("npm rm -g", { silent: false });
     shell.cd(root);
     shell.echo("root now: " + shell.pwd());
     fs.rmSync("./test-env", { recursive: true }, () =>
