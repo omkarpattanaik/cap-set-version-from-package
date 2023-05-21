@@ -4,6 +4,7 @@ const path = require("path");
 
 describe("Starting Functional Test cases...", () => {
   let root = null;
+  const csvfp = "cap-set-version-from-package"
   beforeAll(() => {
     root = shell.pwd().stdout;
     shell.echo("root: ", root);
@@ -17,7 +18,7 @@ describe("Starting Functional Test cases...", () => {
   test("should throw error i.e 'Invalid Package : file' if package.json is not found", async () => {
     expect(
       shell
-        .exec("csvfp", { silent: false })
+        .exec(csvfp, { silent: false })
         .stderr.includes("Invalid Package : file")
     ).toBeTruthy();
   });
@@ -26,7 +27,7 @@ describe("Starting Functional Test cases...", () => {
     shell.cd("sample_app");
     expect(
       shell
-        .exec("csvfp", { silent: false })
+        .exec(csvfp, { silent: false })
         .stderr.includes(
           "WARNING:  Android platform: folder android does not exist"
         )
@@ -35,7 +36,7 @@ describe("Starting Functional Test cases...", () => {
   test("should throw Warning  i.e 'ios does not exist' if ios dir is not found", async () => {
     expect(
       shell
-        .exec("csvfp", { silent: false })
+        .exec(csvfp, { silent: false })
         .stderr.includes("WARNING:  ios platform: folder ios does not exist")
     ).toBeTruthy();
   });
@@ -45,7 +46,7 @@ describe("Starting Functional Test cases...", () => {
     shell.exec("npx cap add android", { silent: false });
     expect(
       shell
-        .exec("csvfp", { silent: false })
+        .exec(csvfp, { silent: false })
         .stdout.includes(
           "Successfully Updated Version and build number in android path:"
         )
@@ -56,7 +57,7 @@ describe("Starting Functional Test cases...", () => {
     shell.exec("npx cap add ios", { silent: false });
     expect(
       shell
-        .exec("csvfp", { silent: false })
+        .exec(csvfp, { silent: false })
         .stdout.includes(
           "Successfully Updated Version and build number in ios path:"
         )
@@ -66,7 +67,7 @@ describe("Starting Functional Test cases...", () => {
     shell.sed("-i", "versionName", "ver-name", "./android/app/build.gradle");
     expect(
       shell
-        .exec("csvfp", { silent: false })
+        .exec(csvfp, { silent: false })
         .stderr.includes(
           'Could not find "versionName" in android/app/build.gradle file'
         )
@@ -77,7 +78,7 @@ describe("Starting Functional Test cases...", () => {
     const gradleBuildFilePath = path.join("./android", "/app/build.gradle");
     expect(
       shell
-        .exec("csvfp", { silent: false })
+        .exec(csvfp, { silent: false })
         .stderr.includes(
           `Invalid Android platform: file ${gradleBuildFilePath} does not exist`
         )
@@ -95,7 +96,7 @@ describe("Starting Functional Test cases...", () => {
     );
     expect(
       shell
-        .exec("csvfp", { silent: false })
+        .exec(csvfp, { silent: false })
         .stderr.includes(
           `Could not find "MARKETING_VERSION" in project.pbxproj file`
         )
@@ -107,10 +108,10 @@ describe("Starting Functional Test cases...", () => {
       "/App/App.xcodeproj/project.pbxproj"
     );
     shell.rm(iOSProjectFilePath);
-    //console.log("Removing; ",shell.exec("csvfp").stderr);
+    //console.log("Removing; ",shell.exec(csvfp).stderr);
     expect(
       shell
-        .exec("csvfp", { silent: false })
+        .exec(csvfp, { silent: false })
         .stderr.includes(
           `Invalid iOS project file: file ${iOSProjectFilePath} does not exist`
         )
