@@ -29,6 +29,5 @@ pnpm-lock.yaml
 yarn.lock
 dist-electron
 
-__tests__
 coverage
 test-env

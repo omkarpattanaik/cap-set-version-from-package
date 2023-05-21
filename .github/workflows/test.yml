@@ -1,0 +1,20 @@
+name: Test
+on:
+    push:
+      branches:
+        - main
+jobs:
+  Test_cap-set-version-from-package_Package_Build:
+    if: contains(github.event.head_commit.message, 'FuncTest')
+    name: Test cap-set-version-from-package workability
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v2
+      - uses: actions/setup-node@v1
+        with:
+          node-version: 16
+      - name: NPM Install dependencies
+        run: npm install
+      - name: Functional test
+        run: npm run test
