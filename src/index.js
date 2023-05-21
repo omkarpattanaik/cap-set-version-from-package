@@ -15,6 +15,11 @@ var customIOSPath = "./ios";
 var iOSPlistPath = "/App/App/Info.plist";
 var iOSProjectFilePath = "/App/App.xcodeproj/project.pbxproj";
 
+/**
+ * @param {JSON} argv
+ * Contains parameters provided using CLI. Refer `--help` for all parameters.
+ * @example csvfp -a=../android  here -a is android path which has value ../andorid.
+ */
 const setCustomValuesfromCLI = async (argv) => {
   customAndroidDirPath = (await argv.androidPath) ?? customAndroidDirPath;
   customJsonPath = (await argv.jsonPath) ?? customJsonPath;
@@ -22,6 +27,10 @@ const setCustomValuesfromCLI = async (argv) => {
   customIOSPath = (await argv.iosPath) ?? customIOSPath;
 };
 
+/**
+ * @description Helps user by showing `type`, `describe` and  `alias` for every applicable parameter for CLI
+ * @example csvfp --help
+ */
 const setCustomOptionInHelp = async () => {
   const argValues = await yargs(hideBin(process.argv))
     .usage(
@@ -56,23 +65,42 @@ csvfp <option>=value`
   return argValues;
 };
 
+/**
+ * @description Helps collect the values inside `package.json` or `custom.json` file.
+ * @param {string} packageJsonFilePath 
+ * Contains path of the `package.json` file in NodeJs project or path of `custom.json`
+ * @returns {Promise<stringJSON>} returns file content of `package.json` or `custom.json`
+ */
 const openPackageJson = async (packageJsonFilePath) => {
   return fs.readFileSync(packageJsonFilePath, "utf-8");
 };
 
+/**
+ * @description Checks if the provided file value has `version`  keyword or not.
+ * @param {stringJSON} file  has value same as content of `package.json` or `custom.json`
+ */
 const checkIfPackageVersionExist = async (file) => {
-  // await console.log( await file);
-  if (!file.toString().match(/(version).*/g)) {
+  await console.log("Type of file:" , typeof await file," : ",file);
+  if (!file.match(/(version).*/g)) {
     throw new Error(`Could not find "version" in package.json file 
     Suggestion:
     - Add "version" key in your package.json file \n`);
   }
 };
 
+/**
+ * @param {stringJSON} file  has value same as content of `package.json` or `custom.json`
+ * @returns {string} returns value of `version` key 
+ */
 const getPackageVersion = async (file) => {
   return await JSON.parse(file)[versionKeyName];
 };
 
+/**
+ * @description Creates a `build no.` using value of `version`
+ * @param {string} version contains value of `version` key present in package.json or custom.json
+ * @returns {number}   returns `build no.`
+ */
 const convertVersionToBuildNumber = async (version) => {
   return parseInt(await version.replaceAll(".", "0").replaceAll("-", "0"));
 };
@@ -289,7 +317,6 @@ const processAll = async () => {
 
   let argv = await setCustomOptionInHelp();
   await setCustomValuesfromCLI(argv);
-
 
   try {
     let customJson;

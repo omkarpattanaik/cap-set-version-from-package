@@ -16,5 +16,5 @@ jobs:
           node-version: 16
       - name: NPM Install dependencies
         run: npm install
-      - name: Functional test
+      - name: Functionality Testing
         run: npm run test

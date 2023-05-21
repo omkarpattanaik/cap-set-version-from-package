@@ -12,7 +12,7 @@ describe("Starting Functional Test cases...", () => {
     shell.echo("csvfp index path: ", root);
     shell.echo("**** Application Testing Starts ****");
     // console.log(shell.ls("./").stdout);
-    //shell.exec("npm link", { silent: true });
+    // shell.exec("npm i -g", { silent: true });
     shell.mkdir("test-env");
     shell.cd("test-env");
   });
