@@ -16,5 +16,7 @@ jobs:
           node-version: 16
       - name: NPM Install dependencies
         run: npm install
+      - name: Install cap-set-version-from-package test
+        run: npm install -g https://github.com/omkarpattanaik/MooCLI
       - name: Functional test
         run: npm run test
